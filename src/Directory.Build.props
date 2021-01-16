@@ -1,0 +1,24 @@
+<Project>
+
+  <PropertyGroup>
+    <LangVersion>9.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors Condition=" '$(BuildingForLiveUnitTesting)' == '' ">true</TreatWarningsAsErrors>
+    <Copyright>Copyright © $([System.DateTime]::UtcNow.ToString("yyyy"))</Copyright>
+
+    <VersionPrefix Condition=" '$(VersionPrefix)' == '' ">0.0.1</VersionPrefix>
+    <Authors>Adam Hewitt</Authors>
+    <PackageDescription>A code generator to automatically resolve dependencies from IoC.</PackageDescription>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/adamhewitt627/Lightning</PackageProjectUrl>
+
+    <Tags>AOP;DI;IoC;Generator</Tags>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+</Project>

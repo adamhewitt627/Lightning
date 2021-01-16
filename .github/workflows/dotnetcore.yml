@@ -1,0 +1,64 @@
+name: Continuous
+
+on:
+  pull_request:
+  push:
+    paths-ignore:
+    - 'README.md'
+    - 'docs/**'
+
+    # We'll build, pack, and push a pre-release to NuGet on master
+    branches: [ master ]
+
+    # Tagging with v* will build that version number and push a release to Nuget
+    #   e.g. v1.2, v3.4.5, etc.
+    tags:
+    - 'v*'
+
+defaults:
+  run:
+    shell: pwsh
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.100
+
+  # Run unit tests
+    - name: Test
+      run: dotnet test src --configuration Release --verbosity normal
+
+  # Package Release
+    - name: Pack
+      run: |
+        <# If we're a tag, force VersionPrefix to the tag value #>
+        if ('${{ github.ref }}' -match '^refs/tags/v') {
+          $match = [regex]::Match('${{ github.ref }}', '^refs/tags/v([0-9]+(\.[0-9]+){1,2})')
+          if ($match.Success) {
+            $env:VersionPrefix = $match.Groups[1].Value
+          } else {
+            throw 'Invalid tag version: ${{ github.ref }}'
+          }
+        }
+        else {
+          <# All other pushes get a CI suffix #>
+          $env:VersionSuffix = 'ci{0:0000}' -f ${{ github.run_number }}
+        }
+
+        dotnet pack src --configuration Release --verbosity normal --output .
+
+  # Publish to NuGet and GitHub Packages
+  # - name: Publish
+  #   if: github.event_name == 'push'
+  #   run: |
+  #     dotnet nuget push *.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_TOKEN }} --skip-duplicate
+  #     dotnet nuget push *.nupkg `
+  #       --source 'https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json' `
+  #       --api-key '${{ github.token }}' `
+  #       --skip-duplicate
