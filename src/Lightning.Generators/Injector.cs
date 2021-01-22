@@ -1,7 +1,8 @@
-﻿using Lightning.Extensions;
+using Lightning.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
+using static Microsoft.CodeAnalysis.CSharp.SyntaxKind;
 
 namespace Lightning
 {
@@ -33,6 +34,7 @@ namespace Lightning
                 var sourceText = CompilationUnit()
                     .WithUsings(List(@class.GetUsingDirectives()))
                     .WithMembers(List(new[] { @namespace ?? type }))
+                    .WithLeadingTrivia(TriviaList(Trivia(PragmaWarningDirectiveTrivia(Token(DisableKeyword), true))))
                     .NormalizeWhitespace()
                     .ToFullString();
 
