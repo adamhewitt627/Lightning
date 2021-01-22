@@ -3,6 +3,8 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <IsPackable>false</IsPackable>
+
+    <NoWarn>1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
